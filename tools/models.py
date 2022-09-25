@@ -5,3 +5,7 @@ from django.db import models
 class Tool(models.Model):
     title = models.CharField(max_length=120)
     slug  = models.SlugField() 
+
+
+
+
