@@ -1,7 +1,10 @@
-
-from django.views.generic import TemplateView,ListView ,DetailView,View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView,ListView ,DetailView,View,RedirectView
+from django.contrib.auth.decorators import login_required
 from django.views.generic.list import MultipleObjectMixin
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.http import Http404
+from django.utils.decorators import method_decorator
 from .mixins import ToolTemplateMixin
 from.models import Tool
 # Create your views here.
@@ -71,7 +74,7 @@ class ShowTooLSog(ToolTemplateMixin,ListView):
 
 
 
-class Showitem(ToolTemplateMixin,DetailView):
+class Showitem(LoginRequiredMixin,ToolTemplateMixin,DetailView):
     model = Tool
     template_name: str = "tools/detail.html"
 
@@ -80,6 +83,10 @@ class Showitem(ToolTemplateMixin,DetailView):
         url_id = self.kwargs.get('id')
         qs = self.get_queryset().filter(id=url_id)
         return qs.get() 
+    # @method_decorator(login_required)
+    # def dispatch(self, request, *args, **kwargs):
+    #     return super().dispatch(request, *args, **kwargs)
+    
 
 
 
