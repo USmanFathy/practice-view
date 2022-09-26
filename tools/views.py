@@ -1,10 +1,18 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView,ListView ,DetailView,View,RedirectView
+from django.views.generic import (
+        TemplateView,
+        ListView ,
+        DetailView,
+        View,
+        RedirectView,
+        CreateView
+        )
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import MultipleObjectMixin
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from django.utils.decorators import method_decorator
+from .forms import ToolForm
 from .mixins import ToolTemplateMixin
 from.models import Tool
 # Create your views here.
@@ -74,15 +82,15 @@ class ShowTooLSog(ToolTemplateMixin,ListView):
 
 
 
-class Showitem(LoginRequiredMixin,ToolTemplateMixin,DetailView):
+class Showitem(LoginRequiredMixin,DetailView):
     model = Tool
-    template_name: str = "tools/detail.html"
 
-    def get_object(self):
 
-        url_id = self.kwargs.get('id')
-        qs = self.get_queryset().filter(id=url_id)
-        return qs.get() 
+    # def get_object(self):
+
+    #     url_id = self.kwargs.get('id')
+    #     qs = self.get_queryset().filter(id=url_id)
+    #     return qs.get() 
     # @method_decorator(login_required)
     # def dispatch(self, request, *args, **kwargs):
     #     return super().dispatch(request, *args, **kwargs)
@@ -91,5 +99,18 @@ class Showitem(LoginRequiredMixin,ToolTemplateMixin,DetailView):
 
 
 
+class CreatNewTool(LoginRequiredMixin,CreateView):
+    form_class= ToolForm
+    template_name: str = 'tools/forms.html'
+    # success_url='/list'
 
-
+    def form_valid(self , form):
+        obj = form.save(commit=False)
+        obj.user = self.request.user
+        obj.save()
+        return super().form_valid(form)
+    def form_invalid(self , form):
+        obj = form.save(commit=False)
+        obj.user = self.request.user
+        obj.save()
+        return super().form_invalid(form)

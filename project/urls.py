@@ -16,12 +16,14 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from tools.views import Team , ShowTooLS , Showitem ,ShowTooLSog
+from tools.views import Team , ShowTooLS , Showitem ,ShowTooLSog ,CreatNewTool
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('team/',Team.as_view(),name='team'),
-    path('list/<int:id>',Showitem.as_view(),name='item'),
+    path('list-show/<slug:slug>/',Showitem.as_view(),name='item'),
+    path('list/create/',CreatNewTool.as_view(),name='create'),
     path('list/',ShowTooLS.as_view(),name='list'),
     path('listview/',ShowTooLSog.as_view(),name='list'),
 ]
