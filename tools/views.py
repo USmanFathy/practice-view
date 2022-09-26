@@ -1,5 +1,4 @@
 
-from turtle import title
 from django.views.generic import TemplateView,ListView ,DetailView,View
 from django.views.generic.list import MultipleObjectMixin
 from django.shortcuts import render
@@ -74,6 +73,16 @@ class ShowTooLSog(ToolTemplateMixin,ListView):
 
 class Showitem(ToolTemplateMixin,DetailView):
     model = Tool
+    template_name: str = "tools/detail.html"
+
+    def get_object(self):
+
+        url_id = self.kwargs.get('id')
+        qs = self.get_queryset().filter(id=url_id)
+        return qs.get() 
+
+
+
 
 
 
