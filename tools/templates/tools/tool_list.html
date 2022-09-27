@@ -1,9 +1,10 @@
 <h1>{{title }}</h1>
-{% for item in object_list  %}
+{% for ite in object_list  %}
 
-<li>{{ item.title }}</li>
+<a href='{{ite.get_absolute_url}}'>{{ ite.title }}</a>
 
 {% endfor %}
 
 
 <a href='{% url 'create' %}'> create</a>
+

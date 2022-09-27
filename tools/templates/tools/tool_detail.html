@@ -1,1 +1,7 @@
 <h1>{{object.title}}</h1>
+
+
+{% if form %}
+{% include 'tools/forms.html' with form=form delete_url=object.get_delete_url %}
+
+{% endif %}

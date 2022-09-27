@@ -5,7 +5,9 @@ from django.views.generic import (
         DetailView,
         View,
         RedirectView,
-        CreateView
+        CreateView,
+        UpdateView,
+        DeleteView
         )
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import MultipleObjectMixin
@@ -85,6 +87,8 @@ class ShowTooLSog(ToolTemplateMixin,ListView):
 class Showitem(LoginRequiredMixin,DetailView):
     model = Tool
 
+    def get_queryset(self):
+        return Tool.objects.filter(user=self.request.user)
 
     # def get_object(self):
 
@@ -109,8 +113,45 @@ class CreatNewTool(LoginRequiredMixin,CreateView):
         obj.user = self.request.user
         obj.save()
         return super().form_valid(form)
+    
     def form_invalid(self , form):
-        obj = form.save(commit=False)
-        obj.user = self.request.user
-        obj.save()
         return super().form_invalid(form)
+
+
+
+
+class UpdateNewTool(LoginRequiredMixin,UpdateView):
+    form_class= ToolForm
+    # model= Tool
+    template_name: str = 'tools/tool_detail.html'
+    def get_queryset(self):
+        return Tool.objects.filter(user=self.request.user)
+
+
+    def get_success_url(self) -> str:
+        return self.object.get_edit_url()
+    # success_url='/list'
+
+    # def form_valid(self , form):
+    #     obj = form.save(commit=False)
+    #     obj.user = self.request.user
+    #     obj.save()
+    #     return super().form_valid(form)
+    # def get_queryset(self):
+    #     return super().get_queryset()
+    
+    # def form_invalid(self , form):
+    #     return super().form_invalid(form)
+
+
+
+
+class DeleteNewTool(LoginRequiredMixin,DeleteView):
+
+    template_name: str = 'tools/forms-delete.html'
+    def get_queryset(self):
+        return Tool.objects.filter(user=self.request.user)
+
+
+    def get_success_url(self) -> str:
+        return "/list/"

@@ -16,7 +16,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from tools.views import Team , ShowTooLS , Showitem ,ShowTooLSog ,CreatNewTool
+from tools.views import Team , ShowTooLS , Showitem ,ShowTooLSog ,CreatNewTool , UpdateNewTool ,DeleteNewTool
 
 
 urlpatterns = [
@@ -24,6 +24,8 @@ urlpatterns = [
     path('team/',Team.as_view(),name='team'),
     path('list-show/<slug:slug>/',Showitem.as_view(),name='item'),
     path('list/create/',CreatNewTool.as_view(),name='create'),
+    path('list/<slug:slug>/',UpdateNewTool.as_view(),name='update'),
+    path('list/<slug:slug>/delete/',DeleteNewTool.as_view(),name='delete'),
     path('list/',ShowTooLS.as_view(),name='list'),
     path('listview/',ShowTooLSog.as_view(),name='list'),
 ]
