@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from tools.views import Team , ShowTooLS , Showitem ,ShowTooLSog ,CreatNewTool , UpdateNewTool ,DeleteNewTool
-from accounts.views import CreatNewUser,user_login ,user_log_out
+from accounts.views import CreatNewUser,user_login ,user_log_out , UpdateUser
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,5 +30,6 @@ urlpatterns = [
     path('listview/',ShowTooLSog.as_view(),name='list'),
     path('register/' , CreatNewUser.as_view() , name='register'),
     path('login/' , user_login , name='login'),
+    # path('user-update/' , UpdateUser.as_view() , name='updateuser'),
     path('logout/' , user_log_out , name='logout'),
 ]

@@ -4,26 +4,34 @@ from django.core.validators import RegexValidator
 # from django.contrib.auth import authenticate
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 
 class UserLoginForm(forms.Form):
-    username = forms.CharField(label='Username' , validators=[RegexValidator(
-                            regex=USERNAME_REGEX,
-                            message="Username must be Alphnumeric or contain any of the followings: '. @ + - '",
-                            code = "invalid_username"
-                        )]
-                        
-                        )
+    query = forms.CharField(label='Username / Email')
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
     def clean(self,*args, **kwargs):
-        username = self.cleaned_data.get('username')
+        query = self.cleaned_data.get('query')
         password = self.cleaned_data.get('password')
-        user_object = MyUser.objects.filter(username=username).first()
 
-        if not user_object:
+        # user_qs1 = MyUser.objects.filter(username__iexact=query)
+        # user_qs2 = MyUser.objects.filter(username__iexact=query)
+        # user_qs_final = (user_qs1 | user_qs2).distinct() this 3 line hit model more than one time so it render error
+        user_qs_final = MyUser.objects.filter(
+            Q(username__iexact=query)|
+            Q(email__iexact=query)
+        )
+        if not user_qs_final.exists() and user_qs_final.count() != 1 :
             raise forms.ValidationError("You have add Invalid Username or Password ! ")
-        else :
-            if not user_object.check_password(password):
-                raise forms.ValidationError("You have add Invalid Username or Password ! ")
+
+        user_object =user_qs_final.first()
+
+        if not user_object.check_password(password):
+            raise forms.ValidationError("You have add Invalid Username or Password ! ")
+
+        if not user_object.is_active():
+            raise forms.ValidationError("You have add Inactive Account ! ")
+
+        self.cleaned_data['user_object']=user_object
         return super(UserLoginForm ,self).clean(*args, **kwargs)
 
 
@@ -50,6 +58,7 @@ class UserCreationForm(forms.ModelForm):
         # Save the provided password in hashed format
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password1"])
+        user.is_active = False
         if commit:
             user.save()
         return user

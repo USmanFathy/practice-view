@@ -6,6 +6,8 @@ from django.contrib.auth.models import (
     BaseUserManager,
     AbstractBaseUser
 )
+# from .utils import code_generator
+# User = Settings.AUTH_USER_MODEL
 
 
 class MyUserManager(BaseUserManager):
@@ -70,6 +72,8 @@ class MyUser(AbstractBaseUser):
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
 
+
+
     def __str__(self):
         return self.email
 
@@ -89,9 +93,14 @@ class MyUser(AbstractBaseUser):
     #     # Simplest possible answer: All admins are staff
     #     return self.is_admin
 
+# class ActivationAccount(models.Model):
+#     user    = models.ForeignKey(Settings.AUTH_USER_MODEL)
+#     key     = models.CharField(max_length = 120) 
+#     expired = models.BooleanField(default=False)
 
-
-
+#     def save(self , *args, **kwargs):
+#         self.key = code_generator()
+#         super(ActivationAccount , self).save(*args,**kwargs)
 
 
 
@@ -101,7 +110,7 @@ class MyUser(AbstractBaseUser):
 
 
 # class Account(models.Model):
-#     user  = models.OneToOneField(User)
+#     user  = models.OneToOneField(Settings.AUTH_USER_MODEL)
 #     city  = models.CharField(max_length=120 , null=True , blank=True)
 
 
@@ -113,6 +122,7 @@ class MyUser(AbstractBaseUser):
 #     if created :
 #         try:
 #             Account.objects.create(user= instance)
+#             ActivationAccount.objects.create(user=instance)
 #         except:
 #             pass
 
