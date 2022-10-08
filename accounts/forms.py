@@ -1,7 +1,31 @@
 from django import forms
-from .models import MyUser
+from .models import MyUser , USERNAME_REGEX
+from django.core.validators import RegexValidator
+# from django.contrib.auth import authenticate
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
+
+class UserLoginForm(forms.Form):
+    username = forms.CharField(label='Username' , validators=[RegexValidator(
+                            regex=USERNAME_REGEX,
+                            message="Username must be Alphnumeric or contain any of the followings: '. @ + - '",
+                            code = "invalid_username"
+                        )]
+                        
+                        )
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)
+    def clean(self,*args, **kwargs):
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
+        user_object = MyUser.objects.filter(username=username).first()
+
+        if not user_object:
+            raise forms.ValidationError("You have add Invalid Username or Password ! ")
+        else :
+            if not user_object.check_password(password):
+                raise forms.ValidationError("You have add Invalid Username or Password ! ")
+        return super(UserLoginForm ,self).clean(*args, **kwargs)
+
 
 
 class UserCreationForm(forms.ModelForm):
@@ -12,7 +36,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('email', 'username')
+        fields = ('username','email')
 
     def clean_password2(self):
         # Check that the two password entries match
