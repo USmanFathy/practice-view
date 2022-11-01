@@ -28,8 +28,8 @@ class UserLoginForm(forms.Form):
         if not user_object.check_password(password):
             raise forms.ValidationError("You have add Invalid Username or Password ! ")
 
-        if not user_object.is_active():
-            raise forms.ValidationError("You have add Inactive Account ! ")
+        # if not user_object.is_active():
+        #     raise forms.ValidationError("You have add Inactive Account ! ")
 
         self.cleaned_data['user_object']=user_object
         return super(UserLoginForm ,self).clean(*args, **kwargs)

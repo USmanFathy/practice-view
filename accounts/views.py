@@ -24,8 +24,8 @@ class CreatNewUser(CreateView):
 
 
 
-    def get_success_url(self) -> str:
-        return HttpResponseRedirect('/login')
+    # def get_success_url(self) -> str:
+    #     return HttpResponseRedirect('/login')
 
 def user_login(request ,*args, **kwargs):
     form = UserLoginForm(request.POST or None)

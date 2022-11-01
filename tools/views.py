@@ -12,7 +12,7 @@ from django.views.generic import (
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import MultipleObjectMixin
 from django.shortcuts import render, get_object_or_404
-from django.http import Http404
+from django.http import Http404 , JsonResponse
 from django.utils.decorators import method_decorator
 from .forms import ToolForm
 from .mixins import ToolTemplateMixin
@@ -62,24 +62,23 @@ class ShowTooLS( MultipleObjectMixin,View):
     title = 'Tools'
     
 
-    def get(self , request ,*args , **kwargs):
-        self.object_list =self.get_queryset()
-        model_name= self.model._meta.model_name
-        app_label= self.model._meta.app_label
-        template = f"{app_label}/{model_name}_list.html"
-        context =self.get_context_data()
-        return render(request,template,context)
+    # def get(self , request ,*args , **kwargs):
+    #     self.object_list =self.get_queryset()
+    #     model_name= self.model._meta.model_name
+    #     app_label= self.model._meta.app_label
+    #     template = f"{app_label}/{model_name}_list.html"
+    #     context =self.get_context_data()
+    #     return render(request,template,context)
 
 
 
 
 
 
-class ShowTooLSog(ToolTemplateMixin,ListView):
+class ShowTooLSog(ListView):
     model = Tool
     title = 'Tools'
-
-
+    template_name: str='tool_list.html'
 
 
 
@@ -146,7 +145,7 @@ class UpdateNewTool(LoginRequiredMixin,UpdateView):
 
 
 
-class DeleteNewTool(LoginRequiredMixin,DeleteView):
+class DeleteNewTool(DeleteView):
 
     template_name: str = 'tools/forms-delete.html'
     def get_queryset(self):
@@ -155,3 +154,16 @@ class DeleteNewTool(LoginRequiredMixin,DeleteView):
 
     def get_success_url(self) -> str:
         return "/list/"
+
+
+
+def toolsapi(request):
+
+    tools = Tool.objects.all()
+
+    data = {
+        'tools':list(tools.values())
+
+    }
+
+    return JsonResponse(data)
